@@ -3,9 +3,11 @@ export enum ErrorCode {
   UNAUTHORIZED = 401,
   FORBIDDEN = 403,
   NOT_FOUND = 404,
+  CONFLICT = 409,
   INVALID_COOKIE = 420,
   RATE_LIMIT = 429,
   INTERNAL_SERVER = 500,
+  INVALID_CREDENTIAL = 401,
 }
 
 export enum DefaultErrorMessage {
@@ -15,6 +17,7 @@ export enum DefaultErrorMessage {
   FORBIDDEN = "Forbidden",
   NOT_FOUND = "Not Found",
   RATE_LIMIT = "Too many requests",
+  CONFLICT = "Conflict",
   INTERNAL_SERVER = "Internal Server",
   NETWORK_ERROR = "Network Error",
   REQUEST_TIMEOUT = "Request timeout",
@@ -23,8 +26,12 @@ export enum DefaultErrorMessage {
   ENDPOINT_NOT_FOUND = "Endpoint Not Found",
 }
 
+export type DefaultErrorMessageKey = keyof typeof DefaultErrorMessage;
+export type ErrorCodeKey = keyof typeof ErrorCode;
+
 export type CustomError = {
   status: number;
+  code: DefaultErrorMessageKey;
   message: string;
   metadata?: Record<string, string>;
 };

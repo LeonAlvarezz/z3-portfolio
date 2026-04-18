@@ -6,6 +6,7 @@ import {
   roles,
   users,
 } from "@/lib/db/schema";
+import env from "@/lib/env";
 import logger from "@/lib/logger";
 import { RoleModel } from "@/modules/role/role.model";
 import { hashPassword } from "@/util/password";
@@ -20,15 +21,15 @@ const baseResources = [
 ] as const;
 
 const seedUser = {
-  username: "Admin",
+  username: "admin",
   email: "admin@example.com",
-  password: "Password123!",
+  password: "12345678",
 };
 
 type ResourceName = (typeof baseResources)[number];
 
 function permissionFor(roleName: RoleModel.Enum, resourceName: ResourceName) {
-  if (roleName === "Admin") {
+  if (roleName === RoleModel.Enum.Admin) {
     return { read: true, write: true, delete: true };
   }
 
@@ -55,9 +56,9 @@ export async function seedDatabase() {
       ResourceName,
       typeof resources.$inferSelect
     >();
-    const basedRoles = Object.keys(RoleModel.Enum);
+    const baseRoles = Object.values(RoleModel.Enum);
     const insertedRoles: RoleModel.Entity[] = [];
-    for (const name of basedRoles) {
+    for (const name of baseRoles) {
       const [role] = await tx
         .insert(roles)
         .values({ name })
@@ -112,7 +113,7 @@ export async function seedDatabase() {
     }
 
     logger.info("Permissions seeded", {
-      count: basedRoles.length * baseResources.length,
+      count: baseRoles.length * baseResources.length,
     });
 
     const adminRole = insertedRoles.find(

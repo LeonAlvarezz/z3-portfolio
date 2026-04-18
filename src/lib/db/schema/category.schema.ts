@@ -11,7 +11,9 @@ export const categories = pgTable("categories", {
 	id: uuid().defaultRandom().notNull().primaryKey(),
 	name: text().notNull(),
 	color: categoryColorEnum().default(CategoryColorEnum.BLUE),
-	user_id: integer().references(() => users.id, { onDelete: "cascade" }),
+	user_id: integer()
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
 	...timestamps,
 });
 

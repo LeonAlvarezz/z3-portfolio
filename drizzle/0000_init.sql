@@ -27,7 +27,7 @@ CREATE TABLE "blogs" (
 	"content" json,
 	"cover_url" text,
 	"description" text NOT NULL,
-	"user_id" integer,
+	"user_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now(),
 	"deleted_at" timestamp,
@@ -37,14 +37,12 @@ CREATE TABLE "blogs" (
 CREATE TABLE "category_on_blogs" (
 	"blog_id" uuid NOT NULL,
 	"category_id" uuid NOT NULL,
-	"created_by" uuid,
 	CONSTRAINT "category_on_blogs_blog_id_category_id_pk" PRIMARY KEY("blog_id","category_id")
 );
 --> statement-breakpoint
 CREATE TABLE "category_on_portfolios" (
 	"portfolio_id" uuid NOT NULL,
 	"category_id" uuid NOT NULL,
-	"created_by" uuid,
 	CONSTRAINT "category_on_portfolios_portfolio_id_category_id_pk" PRIMARY KEY("portfolio_id","category_id")
 );
 --> statement-breakpoint
@@ -52,7 +50,7 @@ CREATE TABLE "categories" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"color" "CategoryColorEnum" DEFAULT 'BLUE',
-	"user_id" integer,
+	"user_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now(),
 	"deleted_at" timestamp
@@ -97,7 +95,7 @@ CREATE TABLE "portfolios" (
 	"cover_url" text,
 	"github_link" text,
 	"preview_link" text,
-	"user_id" integer,
+	"user_id" integer NOT NULL,
 	"published_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now(),
@@ -106,16 +104,16 @@ CREATE TABLE "portfolios" (
 );
 --> statement-breakpoint
 CREATE TABLE "permission_flags" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"role_id" integer NOT NULL,
-	"resource_id" uuid NOT NULL,
+	"resource_id" integer NOT NULL,
 	"read" boolean DEFAULT false NOT NULL,
 	"write" boolean DEFAULT false NOT NULL,
 	"delete" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "resources" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now(),
@@ -142,7 +140,7 @@ CREATE TABLE "portfolio_metric" (
 );
 --> statement-breakpoint
 ALTER TABLE "auths" ADD CONSTRAINT "auths_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "blog_metric" ADD CONSTRAINT "blog_metric_blog_id_blogs_id_fk" FOREIGN KEY ("blog_id") REFERENCES "public"."blogs"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "blog_metric" ADD CONSTRAINT "blog_metric_blog_id_blogs_id_fk" FOREIGN KEY ("blog_id") REFERENCES "public"."blogs"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "blogs" ADD CONSTRAINT "blogs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_on_blogs" ADD CONSTRAINT "category_on_blogs_blog_id_blogs_id_fk" FOREIGN KEY ("blog_id") REFERENCES "public"."blogs"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_on_blogs" ADD CONSTRAINT "category_on_blogs_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -154,5 +152,5 @@ ALTER TABLE "users" ADD CONSTRAINT "users_role_id_roles_id_fk" FOREIGN KEY ("rol
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_flags" ADD CONSTRAINT "permission_flags_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_flags" ADD CONSTRAINT "permission_flags_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "portfolio_metric" ADD CONSTRAINT "portfolio_metric_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "portfolio_metric" ADD CONSTRAINT "portfolio_metric_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "permission_flags_role_id_resource_id_unique" ON "permission_flags" USING btree ("role_id","resource_id");

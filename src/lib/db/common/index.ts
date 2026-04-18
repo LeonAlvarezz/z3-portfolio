@@ -1,10 +1,16 @@
-import { customType } from "drizzle-orm/pg-core";
+import { customType, PgColumn } from "drizzle-orm/pg-core";
 import { isoTimestamp as timestamp } from "./iso-timestamp";
+import { ColumnBaseConfig, ColumnDataType, SQL, sql } from "drizzle-orm";
 
 export const timestamps = {
   created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
   updated_at: timestamp({ mode: "string" }).defaultNow(),
   deleted_at: timestamp({ mode: "string" }),
+};
+
+export const simpleTimestamps = {
+  created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+  updated_at: timestamp({ mode: "string" }).defaultNow(),
 };
 
 export const bytea = customType<{
@@ -67,3 +73,32 @@ export const isoTimestamp = customType<{
     return `${value.substring(0, 10)}T${value.substring(11, 19)}Z`;
   },
 });
+
+type ColumnDataTypeToTSType<T extends ColumnDataType> = T extends "string"
+  ? string
+  : T extends "number"
+    ? number
+    : T extends "boolean"
+      ? boolean
+      : never;
+
+export function coalesce<TDataType extends ColumnDataType>(
+  ...columns: (
+    | PgColumn<ColumnBaseConfig<TDataType, string>>
+    | SQL<ColumnDataTypeToTSType<TDataType>>
+    | ColumnDataTypeToTSType<TDataType>
+  )[]
+): SQL<ColumnDataTypeToTSType<TDataType> | null> {
+  const sqlArgs = sql.join(
+    columns.map((a) => sql`${a}`),
+    sql.raw(","),
+  );
+  return sql`coalesce(${sqlArgs})`;
+}
+
+// export function coalesce<C extends Column>(
+//   column: C,
+//   defaultValue: C["_"]["data"] | AnyColumn<{ data: C["_"]["data"] }>,
+// ): SQL<C["_"]["data"]> {
+//   return sql`coalesce(${column}, ${defaultValue})`.mapWith(column);
+// }

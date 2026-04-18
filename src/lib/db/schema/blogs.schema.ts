@@ -18,7 +18,9 @@ export const blogs = pgTable("blogs", {
 	content: json(),
 	cover_url: text(),
 	description: text().notNull(),
-	user_id: integer().references(() => users.id, { onDelete: "cascade" }),
+	user_id: integer()
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
 	...timestamps,
 });
 

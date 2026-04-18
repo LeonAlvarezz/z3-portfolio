@@ -21,7 +21,9 @@ export const portfolios = pgTable("portfolios", {
 	cover_url: text(),
 	github_link: text(),
 	preview_link: text(),
-	user_id: integer().references(() => users.id, { onDelete: "cascade" }),
+	user_id: integer()
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
 	published_at: timestamp(),
 	...timestamps,
 });

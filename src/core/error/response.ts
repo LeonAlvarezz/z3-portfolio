@@ -29,6 +29,31 @@ export const CursorPaginationSchema = <T, U>(data: T, extra?: U) => {
   }
 };
 
+export const PagePaginationSchema = <T, U>(data: T, extra?: U) => {
+  const schema = z.object({
+    data,
+    meta: z.object({
+      total_count: z.number(),
+      page_size: z.number(),
+      page_count: z.number(),
+      page: z.number(),
+    }),
+  });
+
+  if (!extra) return schema;
+
+  return schema.extend({
+    extra,
+  });
+};
+
+export const OpenApiResponseSchema = {
+  success: <T extends z.ZodType>(data: T) => SuccessSchema(data),
+  page: <T extends z.ZodType>(item: T) =>
+    SuccessSchema(PagePaginationSchema(item.array())),
+  simpleSuccess: () => SimpleSuccessSchema(),
+};
+
 export const SimpleSuccessSchema = () =>
   z.object({
     success: z.boolean().default(true),
@@ -58,6 +83,17 @@ export type CursorPagination<T, U = undefined> = {
   data: T[];
   extra?: U;
   meta: CursorModel.CursorMeta;
+};
+
+export type PagePagination<T, U = undefined> = {
+  data: T[];
+  extra?: U;
+  meta: {
+    total_count: number;
+    page_size: number;
+    page_count: number;
+    page: number;
+  };
 };
 
 export const Success = <T>(data: T) => ({ success: true as const, data });

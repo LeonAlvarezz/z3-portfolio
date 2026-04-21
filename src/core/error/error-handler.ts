@@ -1,7 +1,6 @@
 import { Elysia } from "elysia";
 
 import { createScopedLogger } from "@/lib/logger";
-import { Fail } from "../response";
 import { RateLimitService } from "@/lib/rate-limit";
 import { ip } from "../request/ip";
 import env from "@/lib/env";
@@ -9,12 +8,15 @@ import { DefaultErrorMessage, ErrorCode } from "./type";
 import { getEnumKey } from "@/util/enum";
 import { ErrorException, InvalidCredentialException } from ".";
 import { isDrizzleError, parseDrizzleError } from "@/lib/db/error";
+import { Fail } from "./response";
 
 const logger = createScopedLogger("error-handler");
 
 export const errorHandler = new Elysia({ name: "error-handling" })
   .use(ip)
   .onError(async ({ error, code, set, ip, request }) => {
+    console.log({ error });
+
     logger.error("🔥 Error occurred", {
       error,
       code,

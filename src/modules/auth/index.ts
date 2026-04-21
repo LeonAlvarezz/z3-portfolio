@@ -8,7 +8,7 @@ import {
   SimpleSuccess,
   Success,
   SuccessSchema,
-} from "@/core/response";
+} from "@/core/error/response";
 import { authGuard } from "./guard";
 import { AuthService } from "./auth.service";
 import { OpenApiKey } from "../app/openapi";

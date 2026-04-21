@@ -1,7 +1,7 @@
 import logger from "@/lib/logger";
-import { db, DrizzleTransaction } from "../db";
-import { roles } from "../db/schema";
 import { RoleModel } from "@/modules/role/role.model";
+import { db, DrizzleTransaction } from "..";
+import { roles } from "../schema";
 
 type SeedExecutor = typeof db | DrizzleTransaction;
 

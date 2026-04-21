@@ -1,6 +1,6 @@
 import Elysia, { InternalServerError } from "elysia";
 import { UserModel } from "./user.model";
-import { Success, SuccessSchema } from "@/core/response";
+import { Success, SuccessSchema } from "@/core/error/response";
 import { authGuard } from "../auth/guard";
 import { OpenApiKey } from "../app/openapi";
 import { UserService } from "./user.service";

@@ -1,7 +1,7 @@
 import { BaseModel } from "@/core/model/base.model";
-import { Success } from "@/core/response";
+import { Success } from "@/core/error/response";
 import Elysia from "elysia";
-import { SuccessSchema } from "@/core/response";
+import { SuccessSchema } from "@/core/error/response";
 import { OpenApiKey } from "./openapi";
 
 export const appInfo = new Elysia().get(

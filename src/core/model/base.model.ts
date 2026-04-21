@@ -5,7 +5,7 @@ import { z } from "zod";
  *
  * Use `BaseRowSchema` when your DB columns are optional but not nullable.
  * Use `BaseRowNullableSchema` when your DB columns are nullable.
- 
+
 */
 export namespace BaseModel {
   export const BaseRowSchema = z.object({
@@ -23,6 +23,10 @@ export namespace BaseModel {
   export const HealthCheckSchema = z.object({
     uptime: z.number(),
     message: z.string().default("OK"),
+  });
+
+  export const UUIDParamsSchema = z.object({
+    id: z.uuid(),
   });
 
   export const CookieSchema = z.object({

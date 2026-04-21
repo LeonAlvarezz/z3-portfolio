@@ -4,7 +4,7 @@ import {
   SimpleSuccessSchema,
   Success,
   SuccessSchema,
-} from "@/core/response";
+} from "@/core/error/response";
 import { authGuard } from "@/modules/auth/guard";
 import { OpenApiKey } from "../app/openapi";
 import { CategoryModel } from "./category.model";
@@ -28,7 +28,7 @@ export const category = new Elysia({ name: "category" })
               "Returns all categories that belong to the currently authenticated user.",
             tags: [OpenApiKey.Category],
           },
-          response: SuccessSchema(CategoryModel.CategorySchema.array()),
+          response: SuccessSchema(CategoryModel.EntitySchema.array()),
         },
       )
       .post(
@@ -40,14 +40,14 @@ export const category = new Elysia({ name: "category" })
         {
           authenticated: true,
           parse: "application/json",
-          body: CategoryModel.CreateCategorySchema,
+          body: CategoryModel.CreateSchema,
           detail: {
             summary: "Create category",
             description:
               "Creates a new category for the currently authenticated user.",
             tags: [OpenApiKey.Category],
           },
-          response: SuccessSchema(CategoryModel.CategorySchema),
+          response: SuccessSchema(CategoryModel.EntitySchema),
         },
       )
       .patch(
@@ -59,15 +59,15 @@ export const category = new Elysia({ name: "category" })
         {
           authenticated: true,
           parse: "application/json",
-          params: CategoryModel.CategoryParamsSchema,
-          body: CategoryModel.UpdateCategorySchema,
+          params: CategoryModel.ParamsSchema,
+          body: CategoryModel.UpdateSchema,
           detail: {
             summary: "Update category by ID",
             description:
               "Updates an existing category owned by the currently authenticated user.",
             tags: [OpenApiKey.Category],
           },
-          response: SuccessSchema(CategoryModel.CategorySchema),
+          response: SuccessSchema(CategoryModel.EntitySchema),
         },
       )
       .delete(
@@ -78,7 +78,7 @@ export const category = new Elysia({ name: "category" })
         },
         {
           authenticated: true,
-          params: CategoryModel.CategoryParamsSchema,
+          params: CategoryModel.ParamsSchema,
           detail: {
             summary: "Delete category by ID",
             description:
@@ -102,7 +102,7 @@ export const category = new Elysia({ name: "category" })
           description: "Returns all categories that are publicly available.",
           tags: [OpenApiKey.Category],
         },
-        response: SuccessSchema(CategoryModel.CategorySchema.array()),
+        response: SuccessSchema(CategoryModel.EntitySchema.array()),
       },
     ),
   );

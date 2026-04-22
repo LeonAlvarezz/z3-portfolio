@@ -19,6 +19,11 @@ RUN bun build \
     --outfile server \
     src/app.ts
 
+# ── Migrator: needs bun runtime + source + drizzle folder ─────────────────────
+FROM base AS migrator
+ENV NODE_ENV=production
+CMD ["bun", "run", "db:migrate"]
+
 # ── App: distroless, binary only ──────────────────────────────────────────────
 FROM gcr.io/distroless/base AS app
 WORKDIR /app
@@ -26,8 +31,3 @@ COPY --from=build /app/server ./server
 ENV NODE_ENV=production
 EXPOSE 3000
 CMD ["./server"]
-
-# ── Migrator: needs bun runtime + source + drizzle folder ─────────────────────
-FROM base AS migrator
-ENV NODE_ENV=production
-CMD ["bun", "run", "db:migrate"]

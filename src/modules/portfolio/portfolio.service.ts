@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { PortfolioRepository } from "./portfolio.repository";
 import type { PortfolioModel } from "./portfolio.model";
 import { getMeta } from "@/util/pagination";
+import { UserRepository } from "../user/user.repository";
 
 function slugify(value: string) {
   return value
@@ -29,14 +30,28 @@ export abstract class PortfolioService {
     filter: PortfolioModel.Filter,
     username: string,
   ) {
-    const result = await PortfolioRepository.paginatePublishedByUsername(
+    const user = await UserRepository.findByUsername(username);
+    if (!user)
+      throw new NotFoundException({
+        message: "User not found",
+      });
+    const result = await PortfolioRepository.paginatePublishedByUser(
       filter,
-      username,
+      user.id,
     );
     return {
       data: result.data,
       meta: getMeta(filter, result.total_count),
     };
+  }
+
+  static async findAllPublishedSlugs(username: string) {
+    const user = await UserRepository.findByUsername(username);
+    if (!user)
+      throw new NotFoundException({
+        message: "User not found",
+      });
+    return PortfolioRepository.findAllPublishedSlug(user.id);
   }
 
   static async findOwnedById(id: string, userId: number) {

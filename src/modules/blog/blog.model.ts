@@ -76,7 +76,6 @@ export namespace BlogModel {
     Response: "BlogResponse",
     ListResponse: "BlogListResponse",
     Filter: "BlogFilter",
-    SimpleSuccessResponse: "SimpleSuccess",
   } as const;
 
   export const OpenApiSchemas = {
@@ -91,7 +90,6 @@ export namespace BlogModel {
     [OpenApi.ListResponse]: OpenApiResponseSchema.page(
       EntityWithCategorySchema,
     ),
-    [OpenApi.SimpleSuccessResponse]: OpenApiResponseSchema.simpleSuccess(),
     [OpenApi.Filter]: FilterSchema,
   };
 

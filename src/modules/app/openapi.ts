@@ -5,4 +5,5 @@ export namespace OpenApiKey {
   export const Blog = "Blog";
   export const Category = "Category";
   export const App = "App";
+  export const Media = "Media";
 }

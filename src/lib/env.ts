@@ -16,6 +16,10 @@ const envSchema = z.object({
   HASH_PASSWORD_ALGORITHM: z.enum(["argon2id", "argon2d", "argon2i", "bcrypt"]),
   HASH_PASSWORD_COST: z.coerce.number(),
   REDIS_URL: z.string(),
+  R2_ACCOUNT_ID: z.string(),
+  R2_ACCESS_KEY_ID: z.string(),
+  R2_SECRET_ACCESS_KEY: z.string(),
+  R2_BUCKET_NAME: z.string(),
 });
 
 // Validate `process.env` against our schema

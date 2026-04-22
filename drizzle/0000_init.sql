@@ -25,7 +25,7 @@ CREATE TABLE "blogs" (
 	"slug" text NOT NULL,
 	"title" text NOT NULL,
 	"content" json,
-	"cover_url" text,
+	"cover_asset_id" integer,
 	"description" text NOT NULL,
 	"user_id" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -90,9 +90,8 @@ CREATE TABLE "portfolios" (
 	"title" text NOT NULL,
 	"description" text NOT NULL,
 	"slug" text NOT NULL,
-	"gallery" text[],
 	"content" json,
-	"cover_url" text,
+	"cover_asset_id" integer,
 	"github_link" text,
 	"preview_link" text,
 	"user_id" integer NOT NULL,
@@ -139,8 +138,28 @@ CREATE TABLE "portfolio_metric" (
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
+CREATE TABLE "media" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"storage_key" text NOT NULL,
+	"file_name" text NOT NULL,
+	"mime_type" text NOT NULL,
+	"size" integer NOT NULL,
+	"user_id" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now(),
+	CONSTRAINT "media_storage_key_unique" UNIQUE("storage_key")
+);
+--> statement-breakpoint
+CREATE TABLE "portfolio_gallery" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"portfolio_id" uuid NOT NULL,
+	"asset_id" integer NOT NULL,
+	"position" integer DEFAULT 0 NOT NULL
+);
+--> statement-breakpoint
 ALTER TABLE "auths" ADD CONSTRAINT "auths_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "blog_metric" ADD CONSTRAINT "blog_metric_blog_id_blogs_id_fk" FOREIGN KEY ("blog_id") REFERENCES "public"."blogs"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "blogs" ADD CONSTRAINT "blogs_cover_asset_id_media_id_fk" FOREIGN KEY ("cover_asset_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "blogs" ADD CONSTRAINT "blogs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_on_blogs" ADD CONSTRAINT "category_on_blogs_blog_id_blogs_id_fk" FOREIGN KEY ("blog_id") REFERENCES "public"."blogs"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_on_blogs" ADD CONSTRAINT "category_on_blogs_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -149,8 +168,12 @@ ALTER TABLE "category_on_portfolios" ADD CONSTRAINT "category_on_portfolios_cate
 ALTER TABLE "categories" ADD CONSTRAINT "categories_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_cover_asset_id_media_id_fk" FOREIGN KEY ("cover_asset_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_flags" ADD CONSTRAINT "permission_flags_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_flags" ADD CONSTRAINT "permission_flags_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "portfolio_metric" ADD CONSTRAINT "portfolio_metric_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "media" ADD CONSTRAINT "media_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "portfolio_gallery" ADD CONSTRAINT "portfolio_gallery_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "portfolio_gallery" ADD CONSTRAINT "portfolio_gallery_asset_id_media_id_fk" FOREIGN KEY ("asset_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "permission_flags_role_id_resource_id_unique" ON "permission_flags" USING btree ("role_id","resource_id");

@@ -4,6 +4,7 @@ import type { BlogModel } from "./blog.model";
 import { slugify } from "@/util/string";
 import { getMeta } from "@/util/pagination";
 import { BlogRepository } from "./blog.repository";
+import { UserRepository } from "../user/user.repository";
 
 function uniqueCategoryIds(categoryIds: string[]) {
   return [...new Set(categoryIds)];
@@ -31,14 +32,28 @@ export abstract class BlogService {
     filter: BlogModel.Filter,
     username: string,
   ) {
+    const user = await UserRepository.findByUsername(username);
+    if (!user)
+      throw new NotFoundException({
+        message: "User not found",
+      });
     const result = await BlogRepository.paginatePublishedByUsername(
       filter,
-      username,
+      user.id,
     );
     return {
       data: result.data,
       meta: getMeta(filter, result.total_count),
     };
+  }
+
+  static async findAllPublishedSlugs(username: string) {
+    const user = await UserRepository.findByUsername(username);
+    if (!user)
+      throw new NotFoundException({
+        message: "User not found",
+      });
+    return BlogRepository.findAllPublishedSlug(user.id);
   }
 
   static async findOwnedById(id: string, userId: number) {

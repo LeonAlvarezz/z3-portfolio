@@ -11,3 +11,5 @@ export * from "./resources.schema";
 export * from "./roles.schema";
 export * from "./portfolio-metric.schema";
 export * from "./blog-metric.schema";
+export * from "./media.schema";
+export * from "./portfolio-gallery.schema";

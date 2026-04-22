@@ -1,5 +1,5 @@
 {
-  "id": "8b683541-12cd-424e-95a7-096ce1c7802e",
+  "id": "8d28327c-a051-4e5e-bfb3-f57ceda1d57e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -186,9 +186,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "cover_url": {
-          "name": "cover_url",
-          "type": "text",
+        "cover_asset_id": {
+          "name": "cover_asset_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -227,6 +227,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "blogs_cover_asset_id_media_id_fk": {
+          "name": "blogs_cover_asset_id_media_id_fk",
+          "tableFrom": "blogs",
+          "tableTo": "media",
+          "columnsFrom": [
+            "cover_asset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
         "blogs_user_id_users_id_fk": {
           "name": "blogs_user_id_users_id_fk",
           "tableFrom": "blogs",
@@ -681,21 +694,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "gallery": {
-          "name": "gallery",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
         "content": {
           "name": "content",
           "type": "json",
           "primaryKey": false,
           "notNull": false
         },
-        "cover_url": {
-          "name": "cover_url",
-          "type": "text",
+        "cover_asset_id": {
+          "name": "cover_asset_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -746,6 +753,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "portfolios_cover_asset_id_media_id_fk": {
+          "name": "portfolios_cover_asset_id_media_id_fk",
+          "tableFrom": "portfolios",
+          "tableTo": "media",
+          "columnsFrom": [
+            "cover_asset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
         "portfolios_user_id_users_id_fk": {
           "name": "portfolios_user_id_users_id_fk",
           "tableFrom": "portfolios",
@@ -1034,6 +1054,156 @@
           "tableTo": "portfolios",
           "columnsFrom": [
             "portfolio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.media": {
+      "name": "media",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "storage_key": {
+          "name": "storage_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mime_type": {
+          "name": "mime_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "media_user_id_users_id_fk": {
+          "name": "media_user_id_users_id_fk",
+          "tableFrom": "media",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "media_storage_key_unique": {
+          "name": "media_storage_key_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "storage_key"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.portfolio_gallery": {
+      "name": "portfolio_gallery",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "portfolio_id": {
+          "name": "portfolio_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "asset_id": {
+          "name": "asset_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "portfolio_gallery_portfolio_id_portfolios_id_fk": {
+          "name": "portfolio_gallery_portfolio_id_portfolios_id_fk",
+          "tableFrom": "portfolio_gallery",
+          "tableTo": "portfolios",
+          "columnsFrom": [
+            "portfolio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "portfolio_gallery_asset_id_media_id_fk": {
+          "name": "portfolio_gallery_asset_id_media_id_fk",
+          "tableFrom": "portfolio_gallery",
+          "tableTo": "media",
+          "columnsFrom": [
+            "asset_id"
           ],
           "columnsTo": [
             "id"

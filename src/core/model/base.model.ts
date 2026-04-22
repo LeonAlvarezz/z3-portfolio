@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { OpenApiResponseSchema } from "@/core/error/response";
 
 /**
  * Common DB timestamp fields.
@@ -29,9 +30,21 @@ export namespace BaseModel {
     id: z.uuid(),
   });
 
+  export const StringListSchema = z.string().array();
+
   export const CookieSchema = z.object({
     session_token: z.string().optional(),
   });
+
+  export const OpenApi = {
+    SimpleSuccessResponse: "SimpleSuccessResponse",
+    StringList: "StringList",
+  } as const;
+
+  export const OpenApiSchemas = {
+    [OpenApi.SimpleSuccessResponse]: OpenApiResponseSchema.simpleSuccess(),
+    [OpenApi.StringList]: OpenApiResponseSchema.stringList(),
+  };
 
   export type CookieDto = z.infer<typeof CookieSchema>;
 }

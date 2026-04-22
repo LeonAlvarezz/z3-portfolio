@@ -1,19 +1,15 @@
 import Elysia from "elysia";
-import {
-  SimpleSuccess,
-  SimpleSuccessSchema,
-  Success,
-  SuccessSchema,
-} from "@/core/error/response";
+import { SimpleSuccess, Success } from "@/core/error/response";
 import { authGuard } from "@/modules/auth/guard";
 import { OpenApiKey } from "../app/openapi";
 import { BlogModel } from "./blog.model";
 import { BlogService } from "./blog.service";
 import { UserModel } from "../user/user.model";
+import { BaseModel } from "@/core/model/base.model";
 
 export const blog = new Elysia({ name: "blog" })
   .use(authGuard)
-  .model(BlogModel.OpenApiSchemas)
+  .model({ ...BlogModel.OpenApiSchemas, ...BaseModel.OpenApiSchemas })
   .group("/blogs", (app) =>
     app
       // .get(
@@ -95,7 +91,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Delete blog by ID",
             tags: [OpenApiKey.Blog],
           },
-          response: SimpleSuccessSchema(),
+          response: BaseModel.OpenApi.SimpleSuccessResponse,
         },
       )
       .post(
@@ -193,6 +189,24 @@ export const blog = new Elysia({ name: "blog" })
       )
 
       .get(
+        "/by-username/:username/published/slugs",
+        async ({ params }) => {
+          const data = await BlogService.findAllPublishedSlugs(params.username);
+          return Success(data);
+        },
+        {
+          params: UserModel.UserSchema.pick({
+            username: true,
+          }),
+          detail: {
+            summary: "Get all public blog slugs",
+            tags: [OpenApiKey.Blog],
+          },
+          response: BaseModel.OpenApi.StringList,
+        },
+      )
+
+      .get(
         "/:slug",
         async ({ params }) => {
           const data = await BlogService.findPublishedBySlug(params.slug);
@@ -219,7 +233,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Increase blog view by slug",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.SimpleSuccessResponse,
+          response: BaseModel.OpenApi.SimpleSuccessResponse,
         },
       ),
   );

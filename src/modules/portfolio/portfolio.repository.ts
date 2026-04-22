@@ -95,28 +95,32 @@ export abstract class PortfolioRepository {
     return portfolio ?? null;
   }
 
-  static async paginatePublishedByUsername(
+  static async findAllPublishedSlug(user_id: number) {
+    const result = await db.query.portfolios.findMany({
+      columns: {
+        slug: true,
+      },
+      where: eq(portfolios.user_id, user_id),
+    });
+    return result.map((portfolio) => portfolio.slug);
+  }
+
+  static async paginatePublishedByUser(
     filter: PortfolioModel.Filter,
-    username: string,
+    user_id: number,
   ) {
     const cond = this.buildFilter(filter, { publishedOnly: true });
     const offset = (filter.page - 1) * filter.page_size;
-    const [user] = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.username, username))
-      .limit(1);
-
-    if (!user) return { data: [], total_count: 0 };
 
     const [total, data] = await Promise.all([
       db
         .select({ count: count() })
         .from(portfolios)
-        .where(and(...cond, eq(portfolios.user_id, user.id))),
+        .leftJoin(users, eq(portfolios.user_id, user_id))
+        .where(and(...cond, eq(users.id, user_id))),
 
       db.query.portfolios.findMany({
-        where: and(...cond, eq(portfolios.user_id, user.id)),
+        where: and(...cond, eq(portfolios.user_id, user_id)),
         with: {
           category_on_portfolios: {
             with: {
@@ -140,25 +144,16 @@ export abstract class PortfolioRepository {
   }
 
   static async create(
-    userId: number,
-    payload: Omit<PortfolioModel.Create, "category_ids"> & {
-      slug: string;
-    },
+    user_id: number,
+    payload: PortfolioModel.Create,
     tx: Client = db,
   ) {
     const [portfolio] = await tx
       .insert(portfolios)
       .values({
-        title: payload.title,
-        description: payload.description,
-        slug: payload.slug,
-        gallery: payload.gallery,
-        content: payload.content,
-        cover_url: payload.cover_url,
-        github_link: payload.github_link,
-        preview_link: payload.preview_link,
-        user_id: userId,
-    })
+        ...payload,
+        user_id,
+      })
       .returning();
 
     return portfolio;

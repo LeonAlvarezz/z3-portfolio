@@ -1,16 +1,16 @@
 import { customType, PgColumn } from "drizzle-orm/pg-core";
-import { isoTimestamp as timestamp } from "./iso-timestamp";
+import { isoTimestamp } from "./iso-timestamp";
 import { ColumnBaseConfig, ColumnDataType, SQL, sql } from "drizzle-orm";
 
 export const timestamps = {
-  created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updated_at: timestamp({ mode: "string" }).defaultNow(),
-  deleted_at: timestamp({ mode: "string" }),
+  created_at: isoTimestamp({ mode: "string" }).defaultNow().notNull(),
+  updated_at: isoTimestamp({ mode: "string" }).defaultNow(),
+  deleted_at: isoTimestamp({ mode: "string" }),
 };
 
 export const simpleTimestamps = {
-  created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updated_at: timestamp({ mode: "string" }).defaultNow(),
+  created_at: isoTimestamp({ mode: "string" }).defaultNow().notNull(),
+  updated_at: isoTimestamp({ mode: "string" }).defaultNow(),
 };
 
 export const bytea = customType<{

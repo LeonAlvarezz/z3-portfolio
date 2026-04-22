@@ -52,6 +52,7 @@ export const OpenApiResponseSchema = {
   page: <T extends z.ZodType>(item: T) =>
     SuccessSchema(PagePaginationSchema(item.array())),
   simpleSuccess: () => SimpleSuccessSchema(),
+  stringList: () => SuccessSchema(z.string().array()),
 };
 
 export const SimpleSuccessSchema = () =>

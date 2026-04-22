@@ -74,6 +74,16 @@ export abstract class BlogRepository {
     return blog ?? null;
   }
 
+  static async findAllPublishedSlug(user_id: number) {
+    const result = await db.query.blogs.findMany({
+      columns: {
+        slug: true,
+      },
+      where: eq(blogs.user_id, user_id),
+    });
+    return result.map((blog) => blog.slug);
+  }
+
   static async findOwnedById(id: string, userId: number) {
     const [blog] = await db
       .select()
@@ -138,26 +148,19 @@ export abstract class BlogRepository {
   //
   static async paginatePublishedByUsername(
     filter: BlogModel.Filter,
-    username: string,
+    user_id: number,
   ) {
     const cond = this.buildFilter(filter, { publishedOnly: true });
     const offset = (filter.page - 1) * filter.page_size;
-    const [user] = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.username, username))
-      .limit(1);
-
-    if (!user) return { data: [], total_count: 0 };
 
     const [total, data] = await Promise.all([
       db
         .select({ count: count() })
         .from(blogs)
-        .where(and(...cond, eq(blogs.user_id, user.id))),
+        .where(and(...cond, eq(blogs.user_id, user_id))),
 
       db.query.blogs.findMany({
-        where: and(...cond, eq(blogs.user_id, user.id)),
+        where: and(...cond, eq(blogs.user_id, user_id)),
         with: {
           category_on_blogs: {
             with: {

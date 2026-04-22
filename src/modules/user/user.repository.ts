@@ -18,6 +18,11 @@ export abstract class UserRepository {
       where: eq(users.email, email),
     });
   }
+  static async findByUsername(username: string) {
+    return await db.query.users.findFirst({
+      where: eq(users.username, username),
+    });
+  }
   static async findAll() {
     return await db.query.users.findMany();
   }

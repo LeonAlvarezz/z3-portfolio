@@ -31,16 +31,15 @@ export namespace PortfolioModel {
     categories: CategoryModel.EntitySchema.array().optional(),
   });
 
-  export const CreateSchema = z.object({
-    title: z.string().trim().min(1),
-    description: z.string().trim().min(1),
-    slug: z.string().trim().min(1).optional(),
-    gallery: z.string().array().optional(),
-    content: z.unknown().optional(),
-    cover_url: z.string().trim().min(1).optional(),
-    github_link: z.string().trim().min(1).optional(),
-    preview_link: z.string().trim().min(1).optional(),
-    category_ids: z.uuid().array().optional(),
+  export const CreateSchema = EntitySchema.pick({
+    title: true,
+    description: true,
+    slug: true,
+    content: true,
+    github_link: true,
+    preview_link: true,
+  }).extend({
+    category_ids: z.string().array().optional(),
   });
 
   export const UpdateSchema = CreateSchema.partial();
@@ -78,7 +77,6 @@ export namespace PortfolioModel {
     AssignCategories: "PortfolioAssignCategories",
     Response: "PortfolioResponse",
     ListResponse: "PortfolioListResponse",
-    SimpleSuccessResponse: "SimpleSuccessResponse",
     Filter: "PortfolioFilter",
   } as const;
 
@@ -92,7 +90,6 @@ export namespace PortfolioModel {
     [OpenApi.ListResponse]: OpenApiResponseSchema.page(
       EntityWithCategorySchema,
     ),
-    [OpenApi.SimpleSuccessResponse]: OpenApiResponseSchema.simpleSuccess(),
     [OpenApi.Filter]: FilterSchema,
   };
 

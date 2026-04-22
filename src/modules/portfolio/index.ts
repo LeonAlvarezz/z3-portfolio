@@ -5,10 +5,11 @@ import { PortfolioModel } from "./portfolio.model";
 import { PortfolioService } from "./portfolio.service";
 import { OpenApiKey } from "../app/openapi";
 import { UserModel } from "../user/user.model";
+import { BaseModel } from "@/core/model/base.model";
 
 export const portfolio = new Elysia({ name: "portfolio" })
   .use(authGuard)
-  .model(PortfolioModel.OpenApiSchemas)
+  .model({ ...PortfolioModel.OpenApiSchemas, ...BaseModel.OpenApiSchemas })
   .group("/portfolios", (app) =>
     app
       // .get(
@@ -91,7 +92,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             tags: [OpenApiKey.Portfolio],
           },
           params: PortfolioModel.ParamsSchema,
-          response: PortfolioModel.OpenApi.SimpleSuccessResponse,
+          response: BaseModel.OpenApi.SimpleSuccessResponse,
         },
       )
       .post(
@@ -192,6 +193,26 @@ export const portfolio = new Elysia({ name: "portfolio" })
           response: PortfolioModel.OpenApi.ListResponse,
         },
       )
+
+      .get(
+        "/by-username/:username/published/slugs",
+        async ({ params }) => {
+          const data = await PortfolioService.findAllPublishedSlugs(
+            params.username,
+          );
+          return Success(data);
+        },
+        {
+          params: UserModel.UserSchema.pick({
+            username: true,
+          }),
+          detail: {
+            summary: "Get all public portfolio slugs",
+            tags: [OpenApiKey.Portfolio],
+          },
+          response: BaseModel.OpenApi.StringList,
+        },
+      )
       .get(
         "/:slug",
         async ({ params }) => {
@@ -220,7 +241,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             tags: [OpenApiKey.Portfolio],
           },
           params: PortfolioModel.SlugParamsSchema,
-          response: PortfolioModel.OpenApi.SimpleSuccessResponse,
+          response: BaseModel.OpenApi.SimpleSuccessResponse,
         },
       ),
   );

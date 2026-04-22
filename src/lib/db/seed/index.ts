@@ -25,6 +25,7 @@ const baseResources = [
   "Portfolio",
   "Blog",
   "Category",
+  "Media",
 ] as const;
 
 const seedUser = {
@@ -45,13 +46,8 @@ const seedPortfolios = [
     title: "Personal Portfolio Site",
     description:
       "A modern personal portfolio website built to showcase projects, skills, and contact information.",
-    cover_url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
     github_link: "https://github.com/example/personal-portfolio-site",
     preview_link: "https://portfolio.example.com",
-    gallery: [
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f",
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    ],
     content: {
       blocks: [
         {
@@ -70,13 +66,8 @@ const seedPortfolios = [
     title: "Task Management Dashboard",
     description:
       "A productivity dashboard for managing tasks, teams, and project timelines.",
-    cover_url: "https://images.unsplash.com/photo-1552664730-d307ca884978",
     github_link: "https://github.com/example/task-management-dashboard",
     preview_link: "https://tasks.example.com",
-    gallery: [
-      "https://images.unsplash.com/photo-1552664730-d307ca884978",
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-    ],
     content: {
       blocks: [
         {
@@ -98,15 +89,11 @@ const seedBlogs = [
     title: "Building a Scalable Portfolio Platform",
     description:
       "Lessons learned from designing and shipping a portfolio platform with reusable modules.",
-    cover_url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
     content: {
       blocks: [
         {
           type: "heading",
-          data: {
-            text: "Architecture Decisions",
-            level: 2,
-          },
+          data: { text: "Architecture Decisions", level: 2 },
         },
         {
           type: "paragraph",
@@ -124,15 +111,11 @@ const seedBlogs = [
     title: "Designing Better User Experiences",
     description:
       "Practical ideas for improving usability, accessibility, and visual consistency in digital products.",
-    cover_url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
     content: {
       blocks: [
         {
           type: "heading",
-          data: {
-            text: "Why UX Matters",
-            level: 2,
-          },
+          data: { text: "Why UX Matters", level: 2 },
         },
         {
           type: "paragraph",
@@ -327,10 +310,8 @@ export async function seedDatabase() {
             slug: portfolio.slug,
             title: portfolio.title,
             description: portfolio.description,
-            cover_url: portfolio.cover_url,
             github_link: portfolio.github_link,
             preview_link: portfolio.preview_link,
-            gallery: [...portfolio.gallery],
             content: portfolio.content,
             user_id: user.id,
             published_at: publishedAt,
@@ -340,10 +321,8 @@ export async function seedDatabase() {
             set: {
               title: portfolio.title,
               description: portfolio.description,
-              cover_url: portfolio.cover_url,
               github_link: portfolio.github_link,
               preview_link: portfolio.preview_link,
-              gallery: [...portfolio.gallery],
               content: portfolio.content,
               user_id: user.id,
               published_at: publishedAt,
@@ -393,7 +372,6 @@ export async function seedDatabase() {
             slug: blog.slug,
             title: blog.title,
             description: blog.description,
-            cover_url: blog.cover_url,
             content: blog.content,
             user_id: user.id,
             published_at: publishedAt,
@@ -403,7 +381,6 @@ export async function seedDatabase() {
             set: {
               title: blog.title,
               description: blog.description,
-              cover_url: blog.cover_url,
               content: blog.content,
               user_id: user.id,
               published_at: publishedAt,

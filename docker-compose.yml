@@ -6,16 +6,22 @@ services:
     restart: "no"
     env_file:
       - .env
+    networks:
+      - dokploy-network
 
   api:
     build:
       context: .
       target: app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     env_file:
       - .env
     depends_on:
       migrator:
         condition: service_completed_successfully
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true

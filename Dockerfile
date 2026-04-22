@@ -33,3 +33,6 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 CMD ["./server"]
+
+FROM base AS migrator
+CMD ["bun", "run", "db:migrate"]

@@ -22,7 +22,7 @@ RUN bun build \
 # ── Migrator: needs bun runtime + source + drizzle folder ─────────────────────
 FROM base AS migrator
 ENV NODE_ENV=production
-CMD ["bun", "run", "db:migrate"]
+CMD ["bun", "db:migrate", "&&", "bun", "db:seed"]
 
 # ── App: distroless, binary only ──────────────────────────────────────────────
 FROM gcr.io/distroless/base AS app

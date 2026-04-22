@@ -1,0 +1,21 @@
+services:
+  migrator:
+    build:
+      context: .
+      target: migrator
+    restart: "no"
+    env_file:
+      - .env
+
+  api:
+    build:
+      context: .
+      target: app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      migrator:
+        condition: service_completed_successfully

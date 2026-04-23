@@ -2,6 +2,7 @@ import z from "zod";
 import { PAGINATION_LIMIT } from "@/constant/app";
 import { OpenApiResponseSchema } from "@/core/error/response";
 import { CategoryModel } from "../category/category.model";
+import { MediaModel } from "../media/media.model";
 
 const BooleanQuerySchema = z.preprocess((value) => {
   if (value === "true") return true;
@@ -19,6 +20,7 @@ export namespace PortfolioModel {
     github_link: z.string().nullable().optional(),
     preview_link: z.string().nullable().optional(),
     user_id: z.number().int().positive(),
+    cover_asset_id: z.number().int().nullable().optional(),
     published_at: z.iso.datetime().nullable().optional(),
     created_at: z.iso.datetime(),
     updated_at: z.iso.datetime().nullable().optional(),

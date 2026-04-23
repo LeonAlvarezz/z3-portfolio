@@ -77,13 +77,32 @@ export abstract class PortfolioRepository {
   }
 
   static async findOwnedById(id: string, userId: number) {
-    const [portfolio] = await db
-      .select()
-      .from(portfolios)
-      .where(and(eq(portfolios.id, id), eq(portfolios.user_id, userId)))
-      .limit(1);
+    const portfolio = await db.query.portfolios.findFirst({
+      where: and(eq(portfolios.id, id), eq(portfolios.user_id, userId)),
+      with: {
+        cover_asset: true,
+        gallery: {
+          with: {
+            asset: true,
+          },
+        },
+        category_on_portfolios: {
+          with: {
+            category: true,
+          },
+        },
+      },
+    });
 
-    return portfolio ?? null;
+    if (!portfolio) return null;
+
+    const { category_on_portfolios, cover_asset, gallery, ...rest } = portfolio;
+    return {
+      ...rest,
+      cover_url: cover_asset ? getPublicImage(cover_asset.storage_key) : null,
+      gallery: gallery.map((g) => getPublicImage(g.asset.storage_key)),
+      categories: category_on_portfolios.map((item) => item.category),
+    };
   }
 
   static async findPublishedBySlug(

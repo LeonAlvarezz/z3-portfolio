@@ -106,7 +106,8 @@ export namespace PortfolioModel {
     AssignCategories: "PortfolioAssignCategories",
     ListItemResponse: "PortfolioListItemResponse",
     DetailResponse: "PortfolioDetailResponse",
-    ListPageResponse: "PortfolioListPageResponse",
+    ListPageResponse: "PortfolioResponse",
+    EntityResponse: "PortfolioListPageResponse",
     Filter: "PortfolioFilter",
   } as const;
 
@@ -117,6 +118,7 @@ export namespace PortfolioModel {
     [OpenApi.Create]: CreateSchema,
     [OpenApi.Update]: UpdateSchema,
     [OpenApi.AssignCategories]: AssignCategoriesSchema,
+    [OpenApi.EntityResponse]: OpenApiResponseSchema.success(EntitySchema),
     [OpenApi.ListItemResponse]: OpenApiResponseSchema.success(ListItemSchema),
     [OpenApi.DetailResponse]: OpenApiResponseSchema.success(DetailSchema),
     [OpenApi.ListPageResponse]: OpenApiResponseSchema.page(ListItemSchema),

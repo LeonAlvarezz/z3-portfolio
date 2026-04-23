@@ -58,7 +58,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             tags: [OpenApiKey.Portfolio],
           },
           body: PortfolioModel.OpenApi.Create,
-          response: PortfolioModel.OpenApi.ListItemResponse,
+          response: PortfolioModel.OpenApi.EntityResponse,
         },
       )
       .put(
@@ -76,7 +76,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
           },
           params: PortfolioModel.ParamsSchema,
           body: PortfolioModel.OpenApi.Update,
-          response: PortfolioModel.OpenApi.ListItemResponse,
+          response: PortfolioModel.OpenApi.EntityResponse,
         },
       )
       .delete(
@@ -98,8 +98,8 @@ export const portfolio = new Elysia({ name: "portfolio" })
       .post(
         "/:id/publish",
         async ({ user, params }) => {
-          const data = await PortfolioService.publish(params.id, user.id);
-          return Success(data);
+          await PortfolioService.publish(params.id, user.id);
+          return SimpleSuccess();
         },
         {
           authenticated: true,
@@ -108,14 +108,14 @@ export const portfolio = new Elysia({ name: "portfolio" })
             summary: "Publish Portfolio by ID",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.ListItemResponse,
+          response: BaseModel.OpenApi.SimpleSuccessResponse,
         },
       )
       .post(
         "/:id/unpublish",
         async ({ user, params }) => {
-          const data = await PortfolioService.unpublish(params.id, user.id);
-          return Success(data);
+          await PortfolioService.unpublish(params.id, user.id);
+          return SimpleSuccess();
         },
         {
           authenticated: true,
@@ -124,7 +124,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             summary: "Unpublish Portfolio by ID",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.ListItemResponse,
+          response: BaseModel.OpenApi.SimpleSuccessResponse,
         },
       )
       .put(

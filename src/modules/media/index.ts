@@ -35,18 +35,14 @@ export const mediaModule = new Elysia({ name: "media" })
       )
       .get(
         "/:id/presigned-download",
-        async ({ user, params }) => {
-          const data = await MediaService.getPresignedDownloadUrl(
-            params.id,
-            user.id,
-          );
+        async ({ params }) => {
+          const data = await MediaService.getPresignedDownloadUrl(params.id);
           return Success(data);
         },
         {
-          authenticated: true,
           params: MediaModel.ParamsSchema,
           detail: {
-            summary: "Get presigned download URL",
+            summary: "Get presigned download URL by ID",
             description:
               "Returns a presigned URL to display or download a media asset.",
             tags: [OpenApiKey.Media],
@@ -54,6 +50,28 @@ export const mediaModule = new Elysia({ name: "media" })
           response: MediaModel.OpenApi.PresignedDownloadResponse,
         },
       )
+
+      // .get(
+      //   "/presigned-url",
+      //   async ({ user, query }) => {
+      //     const data = await MediaService.getPresignedUrl(
+      //       query.storage_key,
+      //       user.id,
+      //     );
+      //     return Success(data);
+      //   },
+      //   {
+      //     authenticated: true,
+      //     query: MediaModel.StorageKeySchema,
+      //     detail: {
+      //       summary: "Get presigned download URL by key",
+      //       description:
+      //         "Returns a presigned URL to display or download a media asset.",
+      //       tags: [OpenApiKey.Media],
+      //     },
+      //     response: MediaModel.OpenApi.PresignedDownloadResponse,
+      //   },
+      // )
       .delete(
         "/:id",
         async ({ user, params }) => {

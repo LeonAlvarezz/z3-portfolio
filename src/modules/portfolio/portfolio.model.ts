@@ -15,9 +15,7 @@ export namespace PortfolioModel {
     title: z.string(),
     description: z.string(),
     slug: z.string(),
-    gallery: z.string().array().nullable().optional(),
     content: z.unknown().nullable().optional(),
-    cover_url: z.string().nullable().optional(),
     github_link: z.string().nullable().optional(),
     preview_link: z.string().nullable().optional(),
     user_id: z.number().int().positive(),
@@ -27,8 +25,31 @@ export namespace PortfolioModel {
     deleted_at: z.iso.datetime().nullable().optional(),
   });
 
-  export const EntityWithCategorySchema = EntitySchema.extend({
+  export const ListItemFieldsSchema = z.object({
     categories: CategoryModel.EntitySchema.array().optional(),
+    cover_url: z.string().nullable(),
+  });
+
+  export const DetailFieldsSchema = z.object({
+    gallery: z.string().array().nullable(),
+  });
+
+  const CategoryFieldsSchema = z.object({
+    categories: CategoryModel.EntitySchema.array().optional(),
+  });
+
+  const GalleryFieldsSchema = z.object({
+    cover_url: z.string().nullable(),
+    gallery: z.string().array().nullable(),
+  });
+
+  export const ListItemSchema = EntitySchema.extend({
+    ...CategoryFieldsSchema.shape,
+  });
+
+  export const DetailSchema = EntitySchema.extend({
+    ...CategoryFieldsSchema.shape,
+    ...GalleryFieldsSchema.shape,
   });
 
   export const CreateSchema = EntitySchema.pick({
@@ -71,29 +92,33 @@ export namespace PortfolioModel {
 
   export const OpenApi = {
     Entity: "Portfolio",
-    EntityWithCategory: "PortfolioWithCategory",
+    ListItem: "PortfolioListItem",
+    Detail: "PortfolioDetail",
     Create: "PortfolioCreate",
     Update: "PortfolioUpdate",
     AssignCategories: "PortfolioAssignCategories",
-    Response: "PortfolioResponse",
-    ListResponse: "PortfolioListResponse",
+    ListItemResponse: "PortfolioListItemResponse",
+    DetailResponse: "PortfolioDetailResponse",
+    ListPageResponse: "PortfolioListPageResponse",
     Filter: "PortfolioFilter",
   } as const;
 
   export const OpenApiSchemas = {
     [OpenApi.Entity]: EntitySchema,
-    [OpenApi.EntityWithCategory]: EntityWithCategorySchema,
+    [OpenApi.ListItem]: ListItemSchema,
+    [OpenApi.Detail]: DetailSchema,
     [OpenApi.Create]: CreateSchema,
     [OpenApi.Update]: UpdateSchema,
     [OpenApi.AssignCategories]: AssignCategoriesSchema,
-    [OpenApi.Response]: OpenApiResponseSchema.success(EntitySchema),
-    [OpenApi.ListResponse]: OpenApiResponseSchema.page(
-      EntityWithCategorySchema,
-    ),
+    [OpenApi.ListItemResponse]: OpenApiResponseSchema.success(ListItemSchema),
+    [OpenApi.DetailResponse]: OpenApiResponseSchema.success(DetailSchema),
+    [OpenApi.ListPageResponse]: OpenApiResponseSchema.page(ListItemSchema),
     [OpenApi.Filter]: FilterSchema,
   };
 
   export type Entity = z.infer<typeof EntitySchema>;
+  export type ListItem = z.infer<typeof ListItemSchema>;
+  export type Detail = z.infer<typeof DetailSchema>;
   export type Create = z.infer<typeof CreateSchema>;
   export type Update = z.infer<typeof UpdateSchema>;
   export type AssignCategories = z.infer<typeof AssignCategoriesSchema>;

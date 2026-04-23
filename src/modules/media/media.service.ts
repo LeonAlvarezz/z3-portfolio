@@ -18,8 +18,19 @@ export abstract class MediaService {
     });
   }
 
-  static async getPresignedDownloadUrl(id: number, userId: number) {
-    const asset = await MediaRepository.findOwnedById(id, userId);
+  static async getPresignedDownloadUrl(id: number) {
+    const asset = await MediaRepository.findOwnedById(id);
+    if (!asset) throw new NotFoundException({ message: "Media not found" });
+
+    const download_url = await R2Service.getPresignedDownloadUrl(
+      asset.storage_key,
+    );
+
+    return { download_url };
+  }
+
+  static async getPresignedUrl(key: string, userId: number) {
+    const asset = await MediaRepository.findOwnedByKey(key, userId);
     if (!asset) throw new NotFoundException({ message: "Media not found" });
 
     const download_url = await R2Service.getPresignedDownloadUrl(

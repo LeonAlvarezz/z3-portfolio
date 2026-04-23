@@ -13,8 +13,19 @@ export namespace MediaModel {
     updated_at: z.iso.datetime().nullable().optional(),
   });
 
+  export const StorageKeySchema = EntitySchema.pick({
+    storage_key: true,
+  });
+
   export const PresignedDownloadResponseSchema = z.object({
     download_url: z.url(),
+  });
+
+  export const CreateSchema = EntitySchema.pick({
+    storage_key: true,
+    file_name: true,
+    mime_type: true,
+    size: true,
   });
 
   export const ParamsSchema = z.object({
@@ -32,4 +43,6 @@ export namespace MediaModel {
     ),
     [OpenApi.Entity]: OpenApiResponseSchema.success(EntitySchema),
   };
+
+  export type Create = z.infer<typeof CreateSchema>;
 }

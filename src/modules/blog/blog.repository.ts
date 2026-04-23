@@ -162,6 +162,7 @@ export abstract class BlogRepository {
       db.query.blogs.findMany({
         where: and(...cond, eq(blogs.user_id, user_id)),
         with: {
+          cover_asset: true,
           category_on_blogs: {
             with: {
               category: true,
@@ -175,7 +176,7 @@ export abstract class BlogRepository {
     ]);
 
     return {
-      data: data.map(({ category_on_blogs, ...blog }) => ({
+      data: data.map(({ category_on_blogs, cover_asset, ...blog }) => ({
         ...blog,
         categories: category_on_blogs.map((item) => item.category),
       })),

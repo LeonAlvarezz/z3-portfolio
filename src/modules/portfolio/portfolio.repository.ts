@@ -21,6 +21,7 @@ import {
   users,
 } from "@/lib/db/schema";
 import type { PortfolioModel } from "./portfolio.model";
+import { getPublicImage } from "@/lib/r2/r2.util";
 
 type Client = typeof db | DrizzleTransaction;
 
@@ -85,14 +86,35 @@ export abstract class PortfolioRepository {
     return portfolio ?? null;
   }
 
-  static async findPublishedBySlug(slug: string) {
-    const [portfolio] = await db
-      .select()
-      .from(portfolios)
-      .where(and(eq(portfolios.slug, slug), isNotNull(portfolios.published_at)))
-      .limit(1);
+  static async findPublishedBySlug(
+    slug: string,
+  ): Promise<PortfolioModel.Detail | null> {
+    const portfolio = await db.query.portfolios.findFirst({
+      where: and(eq(portfolios.slug, slug), isNotNull(portfolios.published_at)),
+      with: {
+        cover_asset: true,
+        gallery: {
+          with: {
+            asset: true,
+          },
+        },
+        category_on_portfolios: {
+          with: {
+            category: true,
+          },
+        },
+      },
+    });
 
-    return portfolio ?? null;
+    if (!portfolio) return null;
+
+    const { category_on_portfolios, cover_asset, gallery, ...rest } = portfolio;
+    return {
+      ...rest,
+      cover_url: cover_asset ? getPublicImage(cover_asset.storage_key) : null,
+      gallery: gallery.map((g) => getPublicImage(g.asset.storage_key)),
+      categories: category_on_portfolios.map((item) => item.category),
+    };
   }
 
   static async findAllPublishedSlug(user_id: number) {
@@ -127,6 +149,7 @@ export abstract class PortfolioRepository {
               category: true,
             },
           },
+          cover_asset: true,
         },
         orderBy: [desc(portfolios.published_at), desc(portfolios.created_at)],
         limit: filter.page_size,
@@ -135,10 +158,15 @@ export abstract class PortfolioRepository {
     ]);
 
     return {
-      data: data.map(({ category_on_portfolios, ...portfolio }) => ({
-        ...portfolio,
-        categories: category_on_portfolios.map((item) => item.category),
-      })),
+      data: data.map(
+        ({ category_on_portfolios, cover_asset, ...portfolio }) => ({
+          ...portfolio,
+          categories: category_on_portfolios.map((item) => item.category),
+          cover_url: cover_asset
+            ? getPublicImage(cover_asset.storage_key)
+            : null,
+        }),
+      ),
       total_count: total[0]?.count ?? 0,
     };
   }

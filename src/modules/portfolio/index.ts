@@ -25,7 +25,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
       //       tags: [OpenApiKey.Portfolio],
       //     },
       //     query: PortfolioModel.OpenApi.Filter,
-      //     response: PortfolioModel.OpenApi.ListResponse,
+      //     response: PortfolioModel.OpenApi.ListPageResponse,
       //   },
       // )
       .get(
@@ -41,7 +41,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             summary: "Get portfolios by id",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.ListItemResponse,
         },
       )
       .post(
@@ -58,7 +58,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             tags: [OpenApiKey.Portfolio],
           },
           body: PortfolioModel.OpenApi.Create,
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.ListItemResponse,
         },
       )
       .put(
@@ -76,7 +76,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
           },
           params: PortfolioModel.ParamsSchema,
           body: PortfolioModel.OpenApi.Update,
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.ListItemResponse,
         },
       )
       .delete(
@@ -108,7 +108,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             summary: "Publish Portfolio by ID",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.ListItemResponse,
         },
       )
       .post(
@@ -124,7 +124,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             summary: "Unpublish Portfolio by ID",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.ListItemResponse,
         },
       )
       .put(
@@ -146,7 +146,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
           },
           params: PortfolioModel.ParamsSchema,
           body: PortfolioModel.OpenApi.AssignCategories,
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.ListItemResponse,
         },
       ),
   )
@@ -164,7 +164,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
       //       summary: "Paginate portfolios",
       //       tags: [OpenApiKey.Portfolio],
       //     },
-      //     response: PortfolioModel.OpenApi.ListResponse,
+      //     response: PortfolioModel.OpenApi.ListPageResponse,
       //   },
       // )
       .get(
@@ -190,7 +190,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
               "Returns published portfolios for a public user profile identified by username.",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.ListResponse,
+          response: PortfolioModel.OpenApi.ListPageResponse,
         },
       )
 
@@ -226,7 +226,7 @@ export const portfolio = new Elysia({ name: "portfolio" })
             summary: "Get portfolio by slug",
             tags: [OpenApiKey.Portfolio],
           },
-          response: PortfolioModel.OpenApi.Response,
+          response: PortfolioModel.OpenApi.DetailResponse,
         },
       )
       .post(

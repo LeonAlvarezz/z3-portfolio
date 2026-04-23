@@ -5,6 +5,7 @@ import env from "@/lib/env";
 import { appInfo } from "./modules/app";
 import { routeHandler } from "./routes/route-handler";
 import openapi from "@elysiajs/openapi";
+import prometheusPlugin from "elysia-prometheus";
 import z from "zod";
 
 const app = new Elysia({
@@ -16,7 +17,15 @@ const app = new Elysia({
       mapJsonSchema: {
         zod: z.toJSONSchema,
       },
-      
+    }),
+  )
+  .use(
+    prometheusPlugin({
+      metricsPath: "/metrics",
+      staticLabels: { service: "z3-portfolio" },
+      dynamicLabels: {
+        userAgent: (ctx) => ctx.request.headers.get("user-agent") ?? "unknown",
+      },
     }),
   )
   .use(errorHandler)

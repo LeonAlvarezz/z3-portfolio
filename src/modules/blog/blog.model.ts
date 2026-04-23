@@ -29,19 +29,19 @@ export namespace BlogModel {
     categories: CategoryModel.EntitySchema.array().optional(),
   });
 
-  export const CreateSchema = z.object({
-    title: z.string().trim().min(1),
-    description: z.string().trim().min(1),
-    slug: z.string().trim().min(1).optional(),
-    content: z.unknown().optional(),
-    cover_url: z.string().trim().min(1).optional(),
-    category_ids: z.uuid().array().optional(),
+  export const CreateSchema = EntitySchema.pick({
+    title: true,
+    description: true,
+    slug: true,
+    content: true,
+  }).extend({
+    category_ids: z.number().int().positive().array().optional(),
   });
 
   export const UpdateSchema = CreateSchema.partial();
 
   export const AssignCategoriesSchema = z.object({
-    category_ids: z.uuid().array(),
+    category_ids: z.number().int().positive().array(),
   });
 
   export const ParamsSchema = z.object({
@@ -61,7 +61,7 @@ export namespace BlogModel {
       .max(100)
       .default(PAGINATION_LIMIT),
     query: z.string().trim().optional(),
-    category_id: z.uuid().optional(),
+    category_id: z.coerce.number().int().positive().optional(),
     published: BooleanQuerySchema.optional(),
   });
 

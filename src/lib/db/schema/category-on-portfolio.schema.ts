@@ -1,30 +1,30 @@
 import { relations } from "drizzle-orm";
-import { pgTable, primaryKey, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, primaryKey, uuid } from "drizzle-orm/pg-core";
 import { categories, portfolios } from ".";
 
 export const categoryOnPortfolios = pgTable(
-	"category_on_portfolios",
-	{
-		portfolio_id: uuid()
-			.references(() => portfolios.id, { onDelete: "cascade" })
-			.notNull(),
-		category_id: uuid()
-			.references(() => categories.id, { onDelete: "cascade" })
-			.notNull(),
-	},
-	(table) => [primaryKey({ columns: [table.portfolio_id, table.category_id] })],
+  "category_on_portfolios",
+  {
+    portfolio_id: uuid()
+      .references(() => portfolios.id, { onDelete: "cascade" })
+      .notNull(),
+    category_id: integer()
+      .references(() => categories.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.portfolio_id, table.category_id] })],
 );
 
 export const categoryOnPortfolioRelation = relations(
-	categoryOnPortfolios,
-	({ one }) => ({
-		category: one(categories, {
-			fields: [categoryOnPortfolios.category_id],
-			references: [categories.id],
-		}),
-		portfolio: one(portfolios, {
-			fields: [categoryOnPortfolios.portfolio_id],
-			references: [portfolios.id],
-		}),
-	}),
+  categoryOnPortfolios,
+  ({ one }) => ({
+    category: one(categories, {
+      fields: [categoryOnPortfolios.category_id],
+      references: [categories.id],
+    }),
+    portfolio: one(portfolios, {
+      fields: [categoryOnPortfolios.portfolio_id],
+      references: [portfolios.id],
+    }),
+  }),
 );

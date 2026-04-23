@@ -16,7 +16,7 @@ export abstract class CategoryRepository {
 			.orderBy(asc(categories.name));
 	}
 
-	static async findOwnedById(id: string, userId: number) {
+	static async findOwnedById(id: number, userId: number) {
 		const [category] = await db
 			.select()
 			.from(categories)
@@ -43,7 +43,7 @@ export abstract class CategoryRepository {
 	}
 
 	static async update(
-		id: string,
+		id: number,
 		userId: number,
 		payload: CategoryModel.UpdateCategoryDto,
 	) {
@@ -56,7 +56,7 @@ export abstract class CategoryRepository {
 		return category ?? null;
 	}
 
-	static async delete(id: string, userId: number) {
+	static async delete(id: number, userId: number) {
 		const [category] = await db
 			.delete(categories)
 			.where(and(eq(categories.id, id), eq(categories.user_id, userId)))

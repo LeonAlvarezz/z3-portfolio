@@ -21,6 +21,7 @@ import {
   users,
 } from "@/lib/db/schema";
 import type { BlogModel } from "./blog.model";
+import { getPublicImage } from "@/lib/r2/r2.util";
 
 type Client = typeof db | DrizzleTransaction;
 
@@ -95,13 +96,26 @@ export abstract class BlogRepository {
   }
 
   static async findPublishedBySlug(slug: string) {
-    const [blog] = await db
-      .select()
-      .from(blogs)
-      .where(and(eq(blogs.slug, slug), isNotNull(blogs.published_at)))
-      .limit(1);
+    const blogResult = await db.query.blogs.findFirst({
+      where: and(eq(blogs.slug, slug), isNotNull(blogs.published_at)),
+      with: {
+        cover_asset: true,
+        category_on_blogs: {
+          with: {
+            category: true,
+          },
+        },
+      },
+    });
 
-    return blog ?? null;
+    if (!blogResult) return null;
+
+    const { category_on_blogs, cover_asset, ...rest } = blogResult;
+    return {
+      ...rest,
+      cover_url: cover_asset ? getPublicImage(cover_asset.storage_key) : null,
+      categories: category_on_blogs.map((item) => item.category),
+    };
   }
 
   // static async paginateByUser(userId: number, filter: BlogModel.BlogFilterDto) {
@@ -185,21 +199,15 @@ export abstract class BlogRepository {
   }
 
   static async create(
-    userId: number,
-    payload: Omit<BlogModel.Create, "category_ids"> & {
-      slug: string;
-    },
+    user_id: number,
+    payload: BlogModel.Create,
     tx: Client = db,
   ) {
     const [blog] = await tx
       .insert(blogs)
       .values({
-        title: payload.title,
-        description: payload.description,
-        slug: payload.slug,
-        content: payload.content,
-        cover_url: payload.cover_url,
-        user_id: userId,
+        ...payload,
+        user_id: user_id,
       })
       .returning();
 
@@ -251,7 +259,7 @@ export abstract class BlogRepository {
     return blog ?? null;
   }
 
-  static async findOwnedCategories(categoryIds: string[], userId: number) {
+  static async findOwnedCategories(categoryIds: number[], userId: number) {
     if (!categoryIds.length) return [];
 
     return await db
@@ -268,7 +276,7 @@ export abstract class BlogRepository {
 
   static async replaceCategories(
     blogId: string,
-    categoryIds: string[],
+    categoryIds: number[],
     tx: Client = db,
   ) {
     await tx.delete(categoryOnBlogs).where(eq(categoryOnBlogs.blog_id, blogId));

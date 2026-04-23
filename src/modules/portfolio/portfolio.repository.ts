@@ -231,7 +231,7 @@ export abstract class PortfolioRepository {
     return portfolio ?? null;
   }
 
-  static async findOwnedCategories(categoryIds: string[], userId: number) {
+  static async findOwnedCategories(categoryIds: number[], userId: number) {
     if (!categoryIds.length) return [];
 
     return await db
@@ -248,7 +248,7 @@ export abstract class PortfolioRepository {
 
   static async replaceCategories(
     portfolioId: string,
-    categoryIds: string[],
+    categoryIds: number[],
     tx: Client = db,
   ) {
     await tx

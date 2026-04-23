@@ -6,7 +6,7 @@ import { getMeta } from "@/util/pagination";
 import { BlogRepository } from "./blog.repository";
 import { UserRepository } from "../user/user.repository";
 
-function uniqueCategoryIds(categoryIds: string[]) {
+function uniqueCategoryIds(categoryIds: number[]) {
   return [...new Set(categoryIds)];
 }
 
@@ -170,7 +170,7 @@ export abstract class BlogService {
   }
 
   private static async assertCategoriesOwned(
-    categoryIds: string[],
+    categoryIds: number[],
     userId: number,
   ) {
     const uniqueIds = uniqueCategoryIds(categoryIds);

@@ -15,7 +15,7 @@ export namespace CategoryModel {
   }
 
   export const EntitySchema = z.object({
-    id: z.uuid(),
+    id: z.number().int().positive(),
     name: z.string().min(1),
     color: z.enum(ColorEnum).nullable().optional(),
     user_id: z.number().int().positive(),
@@ -32,7 +32,7 @@ export namespace CategoryModel {
   export const UpdateSchema = CreateSchema.partial();
 
   export const ParamsSchema = z.object({
-    id: z.uuid(),
+    id: z.coerce.number().int().positive(),
   });
 
   export type CreateCategoryDto = z.infer<typeof CreateSchema>;

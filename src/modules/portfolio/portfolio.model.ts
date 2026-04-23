@@ -39,16 +39,21 @@ export namespace PortfolioModel {
   });
 
   const GalleryFieldsSchema = z.object({
-    cover_url: z.string().nullable(),
     gallery: z.string().array().nullable(),
   });
 
+  const CoverUrlFieldsSchema = z.object({
+    cover_url: z.string().nullable(),
+  });
+
   export const ListItemSchema = EntitySchema.extend({
+    ...CoverUrlFieldsSchema.shape,
     ...CategoryFieldsSchema.shape,
   });
 
   export const DetailSchema = EntitySchema.extend({
     ...CategoryFieldsSchema.shape,
+    ...CoverUrlFieldsSchema.shape,
     ...GalleryFieldsSchema.shape,
   });
 
@@ -60,13 +65,13 @@ export namespace PortfolioModel {
     github_link: true,
     preview_link: true,
   }).extend({
-    category_ids: z.string().array().optional(),
+    category_ids: z.number().int().positive().array().optional(),
   });
 
   export const UpdateSchema = CreateSchema.partial();
 
   export const AssignCategoriesSchema = z.object({
-    category_ids: z.uuid().array(),
+    category_ids: z.number().int().positive().array(),
   });
 
   export const ParamsSchema = z.object({
@@ -86,7 +91,7 @@ export namespace PortfolioModel {
       .max(100)
       .default(PAGINATION_LIMIT),
     query: z.string().trim().optional(),
-    category_id: z.uuid().optional(),
+    category_id: z.coerce.number().int().positive().optional(),
     published: BooleanQuerySchema.optional(),
   });
 

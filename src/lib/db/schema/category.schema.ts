@@ -1,4 +1,11 @@
-import { integer, pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { enumToPgEnum, timestamps } from "../common";
 import { categoryOnBlogs, categoryOnPortfolios, users } from ".";
 import { relations } from "drizzle-orm";
@@ -8,7 +15,7 @@ export const categoryColorEnum = pgEnum(
   enumToPgEnum(CategoryModel.ColorEnum),
 );
 export const categories = pgTable("categories", {
-  id: uuid().defaultRandom().notNull().primaryKey(),
+  id: serial().primaryKey(),
   name: text().notNull(),
   color: categoryColorEnum().default(CategoryModel.ColorEnum.BLUE),
   user_id: integer()

@@ -13,7 +13,7 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function uniqueCategoryIds(categoryIds: string[]) {
+function uniqueCategoryIds(categoryIds: number[]) {
   return [...new Set(categoryIds)];
 }
 
@@ -39,6 +39,8 @@ export abstract class PortfolioService {
       filter,
       user.id,
     );
+    console.log({ data: result.data });
+
     return {
       data: result.data,
       meta: getMeta(filter, result.total_count),
@@ -187,7 +189,7 @@ export abstract class PortfolioService {
   }
 
   private static async assertCategoriesOwned(
-    categoryIds: string[],
+    categoryIds: number[],
     userId: number,
   ) {
     const uniqueIds = uniqueCategoryIds(categoryIds);

@@ -19,7 +19,7 @@ export abstract class CategoryService {
 	}
 
 	static async update(
-		id: string,
+		id: number,
 		userId: number,
 		payload: CategoryModel.UpdateCategoryDto,
 	) {
@@ -29,7 +29,7 @@ export abstract class CategoryService {
 		return category;
 	}
 
-	static async delete(id: string, userId: number) {
+	static async delete(id: number, userId: number) {
 		const category = await CategoryRepository.delete(id, userId);
 		if (!category)
 			throw new NotFoundException({ message: "Category not found" });

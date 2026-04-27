@@ -40,7 +40,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Get blog by ID",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.EntityResponse,
         },
       )
       .post(
@@ -57,7 +57,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Create blog",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.EntityResponse,
         },
       )
       .put(
@@ -75,7 +75,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Update blog by ID",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.EntityResponse,
         },
       )
       .delete(
@@ -107,7 +107,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Publish blog by ID",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.EntityResponse,
         },
       )
       .post(
@@ -124,7 +124,7 @@ export const blog = new Elysia({ name: "blog" })
             tags: [OpenApiKey.Blog],
           },
 
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.EntityResponse,
         },
       )
       .put(
@@ -146,7 +146,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Assign categories to blog",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.EntityResponse,
         },
       ),
   )
@@ -184,7 +184,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Paginate public blogs",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.ListResponse,
+          response: BlogModel.OpenApi.ListPageResponse,
         },
       )
 
@@ -218,7 +218,7 @@ export const blog = new Elysia({ name: "blog" })
             summary: "Get public blog by slug",
             tags: [OpenApiKey.Blog],
           },
-          response: BlogModel.OpenApi.Response,
+          response: BlogModel.OpenApi.DetailResponse,
         },
       )
       .post(

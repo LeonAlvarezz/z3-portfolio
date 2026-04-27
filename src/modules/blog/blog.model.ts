@@ -17,16 +17,37 @@ export namespace BlogModel {
     description: z.string(),
     slug: z.string(),
     content: z.unknown().nullable().optional(),
-    cover_url: z.string().nullable().optional(),
     user_id: z.number().int().positive(),
+    cover_asset_id: z.number().int().nullable().optional(),
     published_at: z.iso.datetime().nullable().optional(),
     created_at: z.iso.datetime(),
     updated_at: z.iso.datetime().nullable().optional(),
     deleted_at: z.iso.datetime().nullable().optional(),
   });
 
-  export const EntityWithCategorySchema = EntitySchema.extend({
+  export const ListItemFieldsSchema = z.object({
     categories: CategoryModel.EntitySchema.array().optional(),
+    cover_url: z.string().nullable(),
+  });
+
+  export const DetailFieldsSchema = z.object({});
+
+  const CategoryFieldsSchema = z.object({
+    categories: CategoryModel.EntitySchema.array().optional(),
+  });
+
+  const CoverUrlFieldsSchema = z.object({
+    cover_url: z.string().nullable(),
+  });
+
+  export const ListItemSchema = EntitySchema.extend({
+    ...CoverUrlFieldsSchema.shape,
+    ...CategoryFieldsSchema.shape,
+  });
+
+  export const DetailSchema = EntitySchema.extend({
+    ...CategoryFieldsSchema.shape,
+    ...CoverUrlFieldsSchema.shape,
   });
 
   export const CreateSchema = EntitySchema.pick({
@@ -67,32 +88,39 @@ export namespace BlogModel {
 
   export const OpenApi = {
     Entity: "Blog",
-    EntityWithCategory: "BlogWithCategory",
+    ListItem: "BlogListItem",
+    Detail: "BlogDetail",
     Params: "BlogParams",
     SlugParams: "BlogSlugParams",
     Create: "BlogCreate",
     Update: "BlogUpdate",
     AssignCategories: "BlogAssignCategories",
-    Response: "BlogResponse",
-    ListResponse: "BlogListResponse",
+    ListItemResponse: "BlogListItemResponse",
+    DetailResponse: "BlogDetailResponse",
+    ListPageResponse: "BlogListPageResponse",
+    EntityResponse: "BlogResponse",
     Filter: "BlogFilter",
   } as const;
 
   export const OpenApiSchemas = {
     [OpenApi.Entity]: EntitySchema,
-    [OpenApi.EntityWithCategory]: EntityWithCategorySchema,
+    [OpenApi.ListItem]: ListItemSchema,
+    [OpenApi.Detail]: DetailSchema,
     [OpenApi.Params]: BaseModel.UUIDParamsSchema,
     [OpenApi.SlugParams]: SlugParamsSchema,
     [OpenApi.Create]: CreateSchema,
     [OpenApi.Update]: UpdateSchema,
     [OpenApi.AssignCategories]: AssignCategoriesSchema,
-    [OpenApi.Response]: OpenApiResponseSchema.success(EntitySchema),
-    [OpenApi.ListResponse]: OpenApiResponseSchema.page(
-      EntityWithCategorySchema,
-    ),
+    [OpenApi.EntityResponse]: OpenApiResponseSchema.success(EntitySchema),
+    [OpenApi.ListItemResponse]: OpenApiResponseSchema.success(ListItemSchema),
+    [OpenApi.DetailResponse]: OpenApiResponseSchema.success(DetailSchema),
+    [OpenApi.ListPageResponse]: OpenApiResponseSchema.page(ListItemSchema),
     [OpenApi.Filter]: FilterSchema,
   };
 
+  export type Entity = z.infer<typeof EntitySchema>;
+  export type ListItem = z.infer<typeof ListItemSchema>;
+  export type Detail = z.infer<typeof DetailSchema>;
   export type Create = z.infer<typeof CreateSchema>;
   export type Update = z.infer<typeof UpdateSchema>;
   export type AssignCategories = z.infer<typeof AssignCategoriesSchema>;

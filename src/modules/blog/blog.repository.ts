@@ -95,7 +95,9 @@ export abstract class BlogRepository {
     return blog ?? null;
   }
 
-  static async findPublishedBySlug(slug: string) {
+  static async findPublishedBySlug(
+    slug: string,
+  ): Promise<BlogModel.Detail | null> {
     const blogResult = await db.query.blogs.findFirst({
       where: and(eq(blogs.slug, slug), isNotNull(blogs.published_at)),
       with: {
@@ -193,6 +195,7 @@ export abstract class BlogRepository {
       data: data.map(({ category_on_blogs, cover_asset, ...blog }) => ({
         ...blog,
         categories: category_on_blogs.map((item) => item.category),
+        cover_url: cover_asset ? getPublicImage(cover_asset.storage_key) : null,
       })),
       total_count: total[0]?.count ?? 0,
     };

@@ -106,8 +106,8 @@ export namespace PortfolioModel {
     AssignCategories: "PortfolioAssignCategories",
     ListItemResponse: "PortfolioListItemResponse",
     DetailResponse: "PortfolioDetailResponse",
-    ListPageResponse: "PortfolioResponse",
-    EntityResponse: "PortfolioListPageResponse",
+    ListPageResponse: "PortfolioListPageResponse",
+    EntityResponse: "PortfolioResponse",
     Filter: "PortfolioFilter",
   } as const;
 
